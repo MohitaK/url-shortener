@@ -84,5 +84,28 @@ Chosen: 302, not 301. A 301 gets cached by browsers/CDNs, so repeat
 clicks may never reach the server, breaking click_count. 302 forces every
 click through the server.
 
+## Hosting & Infrastructure
+- App: Render (Node/Express process)
+- Database: Neon (managed, serverless Postgres)
+- Connection: app connects to Neon over a TLS-encrypted connection string, 
+  stored as the `DATABASE_URL` env var — never committed to git (`.env` 
+  is gitignored)
+- App and DB are separate hosted services communicating over the network, 
+  not co-located on the same machine
+
+## Database choice — relational vs. non-relational
+Chosen: relational (Postgres). Our data is fixed-schema and tabular, needs 
+DB-enforced uniqueness constraints (short_code) and native auto-increment 
+IDs (the basis of our short-code generation), and may need joins later 
+(e.g. a users table). Non-relational databases solve a different problem 
+— flexible/nested schemas at massive write scale — which this project 
+doesn't need.
+
+Chosen: Postgres over MySQL/SQLite. SQLite is single-writer, unsuited to 
+a hosted multi-request app. Postgres offers native sequences (useful for 
+the single-insert optimization noted earlier), strong constraint 
+enforcement, and is the default across the modern free-tier hosting 
+ecosystem (Neon, Supabase, Railway, Render).
+
 ## Status
 Decisions finalized. Scaffolding not yet started.
