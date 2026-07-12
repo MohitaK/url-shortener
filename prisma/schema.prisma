@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Matches the urls table designed in ARCHITECTURE.md.
+// Field names are camelCase (JS convention); @map/@@map keep the actual
+// Postgres column/table names in snake_case (SQL convention).
+model Url {
+  id         Int      @id @default(autoincrement())
+  shortCode  String   @unique @map("short_code")
+  longUrl    String   @map("long_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+  clickCount Int      @default(0) @map("click_count")
+
+  @@map("urls")
+}

@@ -12,3 +12,8 @@
 
 # Logs
 *.log
+
+/generated/prisma
+
+# Dependencies
+node_modules/
