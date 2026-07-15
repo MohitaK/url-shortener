@@ -9,4 +9,4 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/api", urlsRouter);
+app.use("/", urlsRouter);

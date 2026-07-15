@@ -52,3 +52,34 @@ export const createShortUrl = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+export const redirectToLongUrl = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    const url = await prisma.url.findUnique({
+      where: { shortCode: code },
+    });
+
+    if (!url) {
+      return res.status(404).json({ error: "Short URL not found" });
+    }
+
+    // Own try/catch, separate from the lookup above: a failed increment
+    // shouldn't block the redirect the user is actually waiting on, just
+    // cost an undercounted click.
+    try {
+      await prisma.url.update({
+        where: { id: url.id },
+        data: { clickCount: { increment: 1 } },
+      });
+    } catch (error) {
+      console.error("Failed to increment click_count:", error);
+    }
+
+    return res.redirect(302, url.longUrl);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+};
