@@ -19,7 +19,7 @@ datasource db {
 // Postgres column/table names in snake_case (SQL convention).
 model Url {
   id         Int      @id @default(autoincrement())
-  shortCode  String   @unique @map("short_code")
+  shortCode  String?   @unique @map("short_code")
   longUrl    String   @map("long_url")
   createdAt  DateTime @default(now()) @map("created_at")
   clickCount Int      @default(0) @map("click_count")
