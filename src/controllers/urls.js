@@ -83,3 +83,20 @@ export const redirectToLongUrl = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+export const getClickCountsForShortCode = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    const url = await prisma.url.findUnique({ where: { shortCode: code } });
+
+    if (!url) {
+      return res.status(404).json({ error: "Url not found." });
+    }
+
+    return res.status(200).json({ clickCount: url.clickCount });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+};
